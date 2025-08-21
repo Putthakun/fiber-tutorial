@@ -17,13 +17,12 @@ func main() {
 	books = append(books, Book{ID: 2, Title: "JK", Auhtor: "Putthakun"})
 
 	// get all data
-	app.Get("/books", func(c *fiber.Ctx) error  {
-		return c.JSON(books)
-	})
+	app.Get("/books", getBooks)
 
-	app.Get("/hello", func(c *fiber.Ctx) error {
-		return c.SendString("Hello wrold")
-	})
-
+	// localhost
 	app.Listen((":8080"))
+}
+
+func getBooks(c *fiber.Ctx) error {
+	return c.SendString("Hello wrold")
 }
