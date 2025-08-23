@@ -1,2 +1,2 @@
-c.senString() return string
-c.Json() return json
+- c.senString() return string
+- c.Json() return json
