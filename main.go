@@ -22,17 +22,22 @@ func main() {
 	// get all data
 	app.Get("/books", getBooks)
 
-	//get by id
+	// get by id
 	app.Get("/books/:id", getBook)
 
-	// localhost
+	// Post
+	app.Post("/books", createBook)
+
+	// localhost server port
 	app.Listen((":8080"))
 }
 
+// get book all
 func getBooks(c *fiber.Ctx) error {
-	return c.SendString("Hello wrold")
+	return c.JSON(books)
 }
 
+// get book by id
 func getBook(c *fiber.Ctx) error {
 	bookId, error := strconv.Atoi(c.Params("id"))
 
@@ -50,4 +55,14 @@ func getBook(c *fiber.Ctx) error {
 
 	// custom error
 	// return c.Status(fiber.StatusNotFound).SendString("Book not found") return status and return error
+}
+
+// Post create book 
+func createBook(c *fiber.Ctx) error {
+	book := new(Book)
+	if err := c.BodyParser(book) ; err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	} 
+	books = append(books, *book)
+	return c.JSON(book)
 }
