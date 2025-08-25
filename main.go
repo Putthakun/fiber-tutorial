@@ -28,6 +28,9 @@ func main() {
 	// Post
 	app.Post("/books", createBook)
 
+	// Update
+	app.Put("/books/:id", updateBook)
+
 	// localhost server port
 	app.Listen((":8080"))
 }
@@ -39,7 +42,7 @@ func getBooks(c *fiber.Ctx) error {
 
 // get book by id
 func getBook(c *fiber.Ctx) error {
-	bookId, error := strconv.Atoi(c.Params("id"))
+	bookId, error := strconv.Atoi(c.Params("id")) // get id
 
 	if error != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(error.Error()) // return status 400 and return error
@@ -60,9 +63,36 @@ func getBook(c *fiber.Ctx) error {
 // Post create book 
 func createBook(c *fiber.Ctx) error {
 	book := new(Book)
-	if err := c.BodyParser(book) ; err != nil {
+	if err := c.BodyParser(book) ; err != nil { 
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	} 
 	books = append(books, *book)
 	return c.JSON(book)
+}
+
+// update book
+func updateBook(c *fiber.Ctx) error {
+	bookId, error := strconv.Atoi(c.Params("id"))
+
+	if error != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(error.Error())
+	}
+
+	bookUpdate := new(Book)
+
+	if error := c.BodyParser(bookUpdate); error != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(error.Error())
+	}
+
+
+
+	for i, book := range(books) {
+		if(bookId == book.ID) {
+			books[i].Title = bookUpdate.Title
+			books[i].Auhtor = bookUpdate.Auhtor
+			return c.JSON(books[i])
+		}
+	}
+
+	return c.SendStatus(fiber.StatusNotFound) 
 }
